@@ -1,6 +1,7 @@
 import getpass
 import SOAPpy
 from config import *
+from classes import StoryCard
 
 soap = SOAPpy.WSDL.Proxy(JIRA_URL)
 
@@ -35,3 +36,31 @@ def get_stories_from_epic(auth, epic):
 
     stories_list = soap.getIssuesFromJqlSearch(auth, search_string, SOAPpy.Types.intType(3000))
     return stories_list
+
+
+def get_stories_from_list(auth, list):
+    result = []
+    for index, story_number in enumerate(list):
+        search_string = 'project = {project} AND issuetype = story AND key = {key}'.format(
+            project=PROJECT_NAME, key=story_number)
+        story = soap.getIssuesFromJqlSearch(auth, search_string, SOAPpy.Types.intType(1))
+
+        for i in range(5, 8):
+            if story[0][5][i].customfieldId in GREENHOPPER_CUSTOM_FIELDS:
+                story_points = story[0][5][i].values[0]
+                break
+
+        result.append(
+            StoryCard(
+                index=index,
+                number=story[0].key,
+                summary=story[0].summary,
+                description=story[0].description,
+                assignee=story[0].assignee,
+                tester="TBD",
+                reporter=story[0].reporter,
+                points=story_points,
+                epic="TBD"
+            )
+        )
+    return result
