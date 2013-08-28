@@ -1,4 +1,5 @@
 import re
+import sys
 import datetime
 
 import xlwt
@@ -63,6 +64,10 @@ def get_report_filename():
     return '../Stats_' + now.strftime("%Y.%m.%d_%H-%M-%S") + '.xls'
 
 
+def get_cards_filename():
+    now = datetime.datetime.now()
+    return '../Cards_' + now.strftime("%Y.%m.%d_%H-%M-%S") + '.xls'
+
 def get_sheet_name():
     now = datetime.datetime.now()
     sheet_name = now.strftime("%Y.%m.%d %H-%M-%S")
@@ -119,3 +124,25 @@ def create_report(data):
     report_file.save(filename)
 
     print 'Results saved in file: {file_name}'.format(file_name=filename)
+
+
+def read_source_file():
+    list = []
+    fh = open(name=sys.argv[1], mode="r")
+    for line in fh.readlines():
+        if line is not None and line != "":
+            list.append(line)
+    return list
+
+
+def render_cards(cards):
+    out_file = xlwt.Workbook()
+    sheet = out_file.add_sheet('test')
+
+    for card in cards:
+        sheet = card.render(sheet)
+
+    filename = get_cards_filename()
+    print 'Results saved in file: {file_name}'.format(file_name=filename)
+    out_file.save(filename)
+

@@ -1,6 +1,7 @@
 *.py[cod]
 
 *.xls
+*.txt
 .idea
 
 local_settings.py

@@ -45,22 +45,36 @@ def get_stories_from_list(auth, list):
             project=PROJECT_NAME, key=story_number)
         story = soap.getIssuesFromJqlSearch(auth, search_string, SOAPpy.Types.intType(1))
 
+        story_points = 'n/a'
         for i in range(5, 8):
             if story[0][5][i].customfieldId in GREENHOPPER_CUSTOM_FIELDS:
                 story_points = story[0][5][i].values[0]
                 break
+
+        for i in range(1, 5):
+            if story[0][5][i].customfieldId in EPIC_NAME_CUSTOM_FIELDS:
+                epic_key = story[0][5][i].values[0]
+                break
+
+        search_string = 'project = {project} AND issuetype = epic AND key = {key}'.format(
+            project=PROJECT_NAME, key=epic_key)
+        epic = soap.getIssuesFromJqlSearch(auth, search_string, SOAPpy.Types.intType(1))
+
+        description = story[0].description
+        description = (description, description[:128] + ' ...')[len(description) > 128]
 
         result.append(
             StoryCard(
                 index=index,
                 number=story[0].key,
                 summary=story[0].summary,
-                description=story[0].description,
+                description=description,
                 assignee=story[0].assignee,
                 tester="TBD",
                 reporter=story[0].reporter,
                 points=story_points,
-                epic="TBD"
+                epic=epic[0].summary
             )
         )
     return result
+
