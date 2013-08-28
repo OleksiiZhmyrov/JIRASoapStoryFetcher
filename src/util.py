@@ -68,9 +68,11 @@ def get_cards_filename():
     now = datetime.datetime.now()
     return './generated/Cards_' + now.strftime("%Y.%m.%d_%H-%M-%S") + '.xls'
 
-def get_sheet_name():
+
+def get_sheet_name(prefix):
     now = datetime.datetime.now()
-    sheet_name = now.strftime("%Y.%m.%d %H-%M-%S")
+    sheet_name = '{prefix} {datetime}'.format(prefix=prefix,
+                                              datetime=now.strftime("%Y.%m.%d %H-%M-%S"))
     return sheet_name
 
 
@@ -97,7 +99,7 @@ def create_report(data):
     print 'Preparing report file...'
 
     report_file = xlwt.Workbook()
-    sheet = report_file.add_sheet(get_sheet_name())
+    sheet = report_file.add_sheet(get_sheet_name('Statistics'))
     sheet = add_header(sheet)
 
     compare_file = raw_input("File to compare with [none]: ")
@@ -138,7 +140,7 @@ def read_source_file():
 
 def render_cards(cards):
     out_file = xlwt.Workbook()
-    sheet = out_file.add_sheet('test')
+    sheet = out_file.add_sheet(get_sheet_name('Cards'))
 
     for card in cards:
         sheet = card.render(sheet)
@@ -146,4 +148,3 @@ def render_cards(cards):
     filename = get_cards_filename()
     print 'Results saved in file: {file_name}'.format(file_name=filename)
     out_file.save(filename)
-
