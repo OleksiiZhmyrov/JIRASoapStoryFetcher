@@ -1,6 +1,6 @@
 import re
 from styles import *
-from local_settings import PROJECT_NAME
+from config import *
 
 
 class StoryCard:
