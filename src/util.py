@@ -61,12 +61,12 @@ def get_results(auth):
 
 def get_report_filename():
     now = datetime.datetime.now()
-    return '../Stats_' + now.strftime("%Y.%m.%d_%H-%M-%S") + '.xls'
+    return './generated/Stats_' + now.strftime("%Y.%m.%d_%H-%M-%S") + '.xls'
 
 
 def get_cards_filename():
     now = datetime.datetime.now()
-    return '../Cards_' + now.strftime("%Y.%m.%d_%H-%M-%S") + '.xls'
+    return './generated/Cards_' + now.strftime("%Y.%m.%d_%H-%M-%S") + '.xls'
 
 def get_sheet_name():
     now = datetime.datetime.now()
@@ -130,8 +130,9 @@ def read_source_file():
     list = []
     fh = open(name=sys.argv[1], mode="r")
     for line in fh.readlines():
-        if line is not None and line != "":
-            list.append(line)
+        if line is not None and line.strip() != "":
+            if line[0] != "#":
+                list.append(line)
     return list
 
 
